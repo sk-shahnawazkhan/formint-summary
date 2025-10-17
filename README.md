@@ -123,7 +123,7 @@ Once complete, a tenant row is created in the `tenants` table and the admin’s 
 ### 3️⃣ Member Sign-Up
 
 - Invited users click their email link, landing on **Member Signup Page**.
-- They create their account and are automatically linked to the correct tenant in the `profiles` table.
+- They create their account and are automatically linked to the correct tenant in the `members` table.
 
 ---
 
@@ -175,6 +175,8 @@ Screenshots or UI previews will be added soon.
 ---
 
 ## 🧰 Developer Setup
+
+> ⚠️ Note: This repository is currently private. The instructions below are informational.
 
 1. **Clone the repository**
 2. **Install dependencies**
