@@ -1,7 +1,7 @@
-# 🚀 Formint — Multi-tenant Form Management SaaS
+# 🚀 Formint — Multi-Tenant HR SaaS Platform
 
-> Formint is a modern multi-tenant SaaS platform built with React.js, Supabase, Tailwind CSS etc.
-> It streamlines job applications, employee onboarding, and team management while providing real-time validations, dynamic forms, and secure data handling.
+> Formint is a modern HR SaaS platform built with React.js, Supabase, Tailwind CSS etc.
+> It streamlines employee onboarding, recruitment, and team management while providing real-time validations, dynamic forms, and secure data handling.
 
 ## 🚀 Live Demo
 
@@ -35,8 +35,9 @@
 
 ## 📝 Overview
 
-**Formint** is a multi-tenant SaaS platform designed to simplify Form system using predefined forms to speed up the process for different businesses.  
-It enables companies to manage job applications, onboard employees, and invite team members securely — all within isolated tenant environments.
+**Formint** is a multi-tenant HR SaaS solution designed for modern companies to streamline their HR operations, including employee onboarding and team collaboration, while ensuring secure and isolated tenant environments.
+
+Each company gets its `own secure tenant environment`, enabling `Admins, Managers, Recruiters, and Employees` to manage their workforce efficiently.
 
 The platform focuses on:
 
@@ -52,12 +53,12 @@ The platform focuses on:
 
 - **Multi-Tenant Architecture** — Each company acts as a tenant and has its own workspace.
 - **Full Authentication** — Password + passwordless login/signup, forgot/update password, and secure session management via Supabase Auth.
+- **Role-Based Access Control (RBAC)** — Admin, Manager, Recruiter, and Employee roles with scoped permissions.
 - **Admin Signup & Tenant Setup** — First user automatically becomes the admin and sets up the company.
 - **Invite-Based Employee Signup** — Admins can invite members, and new members join with roles through secure invite links.
-- **Role-Based Access Control (RBAC)** — Admin, Manager, Employee, and Demo roles with scoped permissions.
 - **Team Management** — Invite, and view members (Active, Pending, Expired) with advanced table features like pagination, filtering, and sorting.
-- **Job & Onboarding Forms** — Fully validated forms for job applications and employee onboarding with file upload support.
-- **Dashboard Analytics** — Stats for job applications, onboarding submissions, members, and pending invites with interactive charts.
+- **Onboarding Forms** — Fully validated forms for employee onboarding with file upload support.
+- **Dashboard Analytics** — Stats for onboarding submissions, members, and pending invites with interactive charts.
 - **Advanced Tables** — Sort, filter, paginate, toggle columns, and view details seamlessly.
 - **Tenant-Level Data Isolation** — RLS policies and Supabase Edge Functions ensure secure access.
 - **Notifications & Emails** — Integrated email invites via SendGrid and in-app toast notifications.
@@ -69,11 +70,10 @@ The platform focuses on:
 
 Instead of listing only pages, Formint focuses on **user-centric flows**:
 
-- **Dashboard** – Real-time overview of Job Applications & Onboardings stats, charts, and quick access to recent activity including **View All** & **View Details**.
+- **Dashboard** – Real-time overview of Onboardings stats, charts, and quick access to recent activity including **View All** & **View Details**.
 - **Team Management** – Centralized place to invite members, view team status.
-- **Job Application Form** – Collect structured candidate data with file uploads and validations.
 - **Onboarding Form** – Smooth employee onboarding with structured workflows.
-- **Job Applications & Onboardings (View All)** – Powerful table with pagination, filtering, sorting, and detailed viewing of candidate submissions.
+- **Onboardings (View All)** – Powerful table with pagination, filtering, sorting, and detailed viewing of candidate submissions.
 - **Details Pages** – Deep view into individual candidate or onboarding records.
 
 ---
@@ -140,12 +140,12 @@ Once complete, a tenant row is created in the `tenants` table and the admin’s 
 
 ## 🧑‍💼 Role-Based Access Control
 
-| Role         | Capabilities                                                     |
-| ------------ | ---------------------------------------------------------------- |
-| **Admin**    | Full control over tenant, invites, analytics, and data           |
-| **Manager**  | Manage job applications and onboarding flows (under development) |
-| **Employee** | Limited access, can view assigned data and submit forms          |
-| **Demo**     | Read-only experience for preview or trial (under developemnt)    |
+| Role          | Capabilities                                              |
+| ------------- | --------------------------------------------------------- |
+| **Admin**     | Full control over tenant, invites, analytics, and data    |
+| **Manager**   | Manage features like onboarding flows (under development) |
+| **Employee**  | Limited access, can view assigned data and submit forms   |
+| **Recruiter** | Dedicated to recruitment activities (future scope)        |
 
 ---
 
@@ -193,7 +193,7 @@ Screenshots or UI previews will be added soon.
 
 1. Admin signs up and creates tenant
 2. Dashboard loads with empty stats
-3. Submit a job application or complete onboarding to populate data
+3. Submit a onboarding form to populate data
 4. Send an invite to a new member and find it reflected in Team table
 5. Accept invite as new member and login
 6. Ensure RBAC differences between Admin and Employee
