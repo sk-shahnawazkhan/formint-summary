@@ -61,7 +61,7 @@ The platform focuses on:
 ✅ Leave Management  
 ✅ Onboarding Flow  
 ✅ Real-time Dashboard & Analytics  
-✅ Scalable Component Architecture
+✅ Scalable Component Architecture  
 ✅ Responsive/Mobile-friendly UI
 
 ---
