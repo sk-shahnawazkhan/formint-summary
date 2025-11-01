@@ -1,7 +1,7 @@
-# 🚀 Formint — Multi-Tenant HR SaaS Platform
+# 🛠️ Formint — Multi-Tenant HR SaaS Platform
 
-> Formint is a modern HR SaaS platform built with React.js, Supabase, Tailwind CSS etc.
-> It streamlines employee onboarding, recruitment, and team management while providing real-time validations, dynamic forms, and secure data handling.
+> Formint is a modern HR SaaS platform built with React.js, Tailwind CSS, shadcn/ui, Supabase, etc.
+> It streamlines employee onboarding, recruitment, leave management, and team operations while providing real-time validations, dynamic forms, and secure data handling for modern HR workflows.
 
 ## 🚀 Live Demo
 
@@ -12,30 +12,31 @@
 ## 🧭 Table of Contents
 
 1. [Overview](#-overview)
-2. [Key Features](#-key-features)
-3. [App Experience & UI](#-app-experience--ui)
-4. [Architecture & Tech Stack](#-architecture--tech-stack)
-5. [Authentication & Multi-Tenant Flow](#-authentication--multi-tenant-flow)
-6. [Role-Based Access Control](#-role-based-access-control)
-7. [Security & Data Isolation](#-security--data-isolation)
-8. [📸 Screenshots](#-screenshots)
-9. [Project Structure & Conventions](#-project-structure--conventions)
-10. [Developer Setup](#-developer-setup)
-11. [Testing](#-testing)
-12. [Production Deployment](#-production-deployment)
-13. [Author](#-author)
-14. [Contact](#-contact)
-15. [License](#-license)
-16. [Developer Note](#-developer-note)
-17. [Additional Notes](#-additional-notes)
-18. [Closing Note](#-closing-note)
-19. [Thank You](#-thank-you)
+2. [Key Highlights](#-key-highlights)
+3. [Key Features](#-key-features)
+4. [App Experience & UI](#-app-experience--ui)
+5. [Architecture & Tech Stack](#-architecture--tech-stack)
+6. [Authentication & Multi-Tenant Flow](#-authentication--multi-tenant-flow)
+7. [Role-Based Access Control](#-role-based-access-control)
+8. [Security & Data Isolation](#-security--data-isolation)
+9. [📸 Screenshots](#-screenshots)
+10. [Project Structure & Conventions](#-project-structure--conventions)
+11. [Developer Setup](#-developer-setup)
+12. [Testing](#-testing)
+13. [Production Deployment](#-production-deployment)
+14. [Author](#-author)
+15. [Contact](#-contact)
+16. [License](#-license)
+17. [Developer Note](#-developer-note)
+18. [Additional Notes](#-additional-notes)
+19. [Closing Note](#-closing-note)
+20. [Thank You](#-thank-you)
 
 ---
 
 ## 📝 Overview
 
-**Formint** is a multi-tenant HR SaaS solution designed for modern companies to streamline their HR operations, including employee onboarding and team collaboration, while ensuring secure and isolated tenant environments.
+**Formint** is a multi-tenant HR SaaS solution designed for modern companies to manage their HR operations, including employee onboarding, leave management and team collaboration, while ensuring **secure and isolated tenant environments**.
 
 Each company gets its `own secure tenant environment`, enabling `Admins, Managers, Recruiters, and Employees` to manage their workforce efficiently.
 
@@ -43,9 +44,25 @@ The platform focuses on:
 
 - Auth Flow
 - Clear onboarding pipelines
+- Leave Management
 - Role-based access control
 - Real-time analytics
 - Scalable architecture
+
+---
+
+## 🌟 Key Highlights
+
+✅ HR SaaS Application  
+✅ Multi-tenant Architecture  
+✅ Supabase Auth & RLS Policies  
+✅ Role-based Access Control (RBAC)  
+✅ Team Management & Invites  
+✅ Leave Management  
+✅ Onboarding Flow  
+✅ Real-time Dashboard & Analytics  
+✅ Scalable Component Architecture
+✅ Responsive/Mobile-friendly UI
 
 ---
 
@@ -57,9 +74,15 @@ The platform focuses on:
 - **Admin Signup & Tenant Setup** — First user automatically becomes the admin and sets up the company.
 - **Invite-Based Employee Signup** — Admins can invite members, and new members join with roles through secure invite links.
 - **Team Management** — Invite, and view members (Active, Pending, Expired) with advanced table features like pagination, filtering, and sorting.
+- **Leave Management** — A complete module to handle all employee leave operations:
+  - **Apply Leave** — Employees can apply for leaves with validations.
+  - **Leave Approvals** — Admins and Managers can review, approve, or reject leave requests through an intuitive table and drawer-based interface.
+  - **Leave Types** — Admins can create, edit, enable/disable, and delete leave types for better organizational structuring.
+  - **My Leaves (History)** — Employees can track their leave status (Pending, Approved, Rejected, Cancelled) with applied dates and remarks.
+  - **Leave Entitlements** — Admins can define or assign leave balances per employee or role, view entitlements, and manage limits with inline warnings.
 - **Onboarding Forms** — Fully validated forms for employee onboarding with file upload support.
 - **Dashboard Analytics** — Stats for onboarding submissions, members, and pending invites with interactive charts.
-- **Advanced Tables** — Sort, filter, paginate, toggle columns, and view details seamlessly.
+- **Advanced Tables** — Sort, filter, paginate, update columns visibility, and view details seamlessly.
 - **Tenant-Level Data Isolation** — RLS policies and Supabase Edge Functions ensure secure access.
 - **Notifications & Emails** — Integrated email invites via SendGrid and in-app toast notifications.
 - **Modern UI/UX** — Responsive, accessible, and clean design with Tailwind CSS, shadcn components, and, custom components.
@@ -68,13 +91,18 @@ The platform focuses on:
 
 ## 🖼️ App Experience & UI
 
-Instead of listing only pages, Formint focuses on **user-centric flows**:
+Instead of listing only pages, Formint focuses on **user-centric workflows** across HR functions:
 
-- **Dashboard** – Real-time overview of Onboardings stats, charts, and quick access to recent activity including **View All** & **View Details**.
-- **Team Management** – Centralized place to invite members, view team status.
-- **Onboarding Form** – Smooth employee onboarding with structured workflows.
-- **Onboardings (View All)** – Powerful table with pagination, filtering, sorting, and detailed viewing of candidate submissions.
-- **Details Pages** – Deep view into individual candidate or onboarding records.
+- **Dashboard** – Real-time overview of Onboarding and leave stats, charts, and quick access to recent activity including **View All** & **View Details**.
+- **Team Management** – Centralized member management and invite handling.
+- **Onboarding Flow** – Smooth employee onboarding with structured workflows.
+- **Leave Management** – Comprehensive leave lifecycle including:
+  - Manage Leave Types
+  - Apply Leave
+  - Leave Approvals
+  - Leave Entitlements
+  - My Leaves (History)
+- **Data Table & Drawers** – Unified interface for CRUD operations and record details with pagination, filtering, sorting, and detailed viewing of submissions.
 
 ---
 
@@ -84,6 +112,7 @@ Instead of listing only pages, Formint focuses on **user-centric flows**:
 - **Backend**: Supabase (Auth, Postgres DB, Storage, Edge Functions, RLS policies)
 - **Email & Notifications**: SendGrid, Sonner toast
 - **State Management**: Context API & Custom hooks
+- **Forms**: React Hook Form
 - **Routing**: React Router
 - **Validation**: Yup
 - **Hosting**: Vercel for frontend, Supabase for backend
@@ -201,7 +230,7 @@ Screenshots or UI previews will be added soon.
 
 ---
 
-## 🚀 Production Deployment
+## ☁️ Production Deployment
 
 - **Frontend**: Deployed on Vercel
 - **Backend**: Supabase project with configured RLS & Edge Functions
@@ -210,7 +239,7 @@ Screenshots or UI previews will be added soon.
 
 ---
 
-## 👨‍💻 Author
+## 🧑‍💻 Author
 
 Developed by [Shahnawaz Khan](https://shahnawazkhan.vercel.app/)  
 Senior Frontend Developer | React Developer
@@ -232,7 +261,7 @@ Its is **not intended for reuse, redistribution, or commercial use**. Because co
 
 ---
 
-## 🧑‍💻 Developer Note
+## ✍️ Developer Note
 
 This project is actively being designed, developed, and maintained solely by me.  
 I’m continuously improving its architecture, UI, and features to make it more robust and scalable.  
