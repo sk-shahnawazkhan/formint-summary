@@ -25,9 +25,10 @@ Public demo will be added once the current production deployment is stabilized.
 5. [Key Design Decisions](#-key-design-decisions)
 6. [Important Flows](#important-flows)
 7. [Security & Data Isolation](#-security--data-isolation)
-8. [Trade-offs & Limitations](#trade-offs--limitations)
-9. [Future Improvements](#-future-improvements)
-10. [Project History](#project-history)
+8. [Email & Communication Infrastructure](#email--communication-infrastructure)
+9. [Trade-offs & Limitations](#trade-offs--limitations)
+10. [Future Improvements](#-future-improvements)
+11. [Project History](#project-history)
 
 ---
 
@@ -209,6 +210,52 @@ This flow ensures users can only enter a tenant through controlled invites, prev
 - Access restricted to tenant-scoped records
 - Sensitive operations handled via **Edge Functions**
 - Storage access controlled and scoped per tenant
+
+---
+
+## Email & Communication Infrastructure
+
+Oclona uses a production-oriented email architecture that separates transactional communication from business mailbox management.
+
+### Domain Structure
+
+- `oclona.com` → public marketing/business website
+- `app.oclona.com` → multi-tenant SaaS application
+
+### Business Communication
+
+Custom domain-based business mailboxes are configured using Zoho Mail for operational and support communication.
+
+Example identities:
+
+- `hello@oclona.com`
+- `support@oclona.com`
+- `shahnawaz@oclona.com`
+
+### Transactional Email Architecture
+
+Transactional emails are handled separately using Resend and Supabase Edge Functions to support:
+
+- invite-based onboarding
+- authentication flows
+- password resets
+- onboarding notifications
+- system communication
+
+### Email Security & Deliverability
+
+To ensure secure and trusted email delivery, the domain infrastructure includes:
+
+- SPF
+- DKIM
+- DMARC
+
+This setup helps improve:
+
+- email authenticity
+- inbox delivery reliability
+- spam protection
+- production-grade communication trust
 
 ---
 
