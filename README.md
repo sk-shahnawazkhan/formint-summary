@@ -215,16 +215,17 @@ This flow ensures users can only enter a tenant through controlled invites, prev
 
 ## Email & Communication Infrastructure
 
-Oclona uses a production-oriented email architecture that separates transactional communication from business mailbox management.
+Oclona uses a production-oriented email architecture that separates business communication from transactional email delivery to improve maintainability, deliverability, and domain reputation management.
 
 ### Domain Structure
 
-- `oclona.com` → public marketing/business website
+- `oclona.com` → public marketing website and business communication
 - `app.oclona.com` → multi-tenant SaaS application
+- `mail.oclona.com` → transactional email infrastructure
 
 ### Business Communication
 
-Custom domain-based business mailboxes are configured using Zoho Mail for operational and support communication.
+Custom domain-based business mailboxes are managed through Zoho Mail for operational and customer communication.
 
 Example identities:
 
@@ -234,28 +235,44 @@ Example identities:
 
 ### Transactional Email Architecture
 
-Transactional emails are handled separately using Resend and Supabase Edge Functions to support:
+Transactional emails are delivered using Resend and Supabase Edge Functions through a dedicated email subdomain.
 
-- invite-based onboarding
-- authentication flows
-- password resets
-- onboarding notifications
-- system communication
+Current use cases include:
+
+- invite-based employee onboarding
+- tenant member invitations
+- onboarding communications
+- workflow notifications
+- future authentication and system-generated emails
+
+Example identities:
+
+- `notifications@mail.oclona.com`
+- `noreply@mail.oclona.com`
 
 ### Email Security & Deliverability
 
-To ensure secure and trusted email delivery, the domain infrastructure includes:
+To ensure secure, authenticated, and reliable email delivery, the infrastructure is configured with industry-standard email authentication mechanisms:
 
-- SPF
-- DKIM
-- DMARC
+- SPF (Sender Policy Framework)
+- DKIM (DomainKeys Identified Mail)
+- DMARC (Domain-based Message Authentication, Reporting & Conformance)
 
-This setup helps improve:
+This configuration helps provide:
 
-- email authenticity
-- inbox delivery reliability
-- spam protection
-- production-grade communication trust
+- authenticated email delivery
+- improved inbox placement
+- spoofing and phishing protection
+- production-grade communication reliability
+- long-term domain reputation management
+
+### Operational Monitoring
+
+Email delivery and communication workflows are monitored through:
+
+- Resend Activity & Delivery Analytics
+- Supabase Edge Function Logs
+- Vercel Deployment Monitoring
 
 ---
 
