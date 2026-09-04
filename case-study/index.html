@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Oclona - Product Engineering Case Study"
+    />
+    <title>Oclona - Product Engineering Case Study</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="https://oclona.com/">Oclona</a>
+        <a
+          class="back-link"
+          href="https://github.com/sk-shahnawazkhan/oclona-summary"
+          >Back to Oclona Summary</a
+        >
+      </div>
+    </header>
+
+    <div class="content">
+      <main>
+        <article class="case-study" id="content">
+          <p class="loading">Loading case study…</p>
+        </article>
+      </main>
+
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <nav><ul id="toc-list"></ul></nav>
+      </aside>
+
+      <button id="backToTop" class="back-to-top" aria-label="Back to top">
+        <img src="../assets/arrow-up.svg" alt="Back to top" />
+      </button>
+    </div>
+
+    <script>
+      marked.setOptions({ gfm: true, breaks: false });
+
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: "strict",
+        theme: "neutral",
+      });
+
+      async function loadCaseStudy() {
+        const response = await fetch("./oclona-case-study.md", {
+          cache: "no-cache",
+        });
+        if (!response.ok)
+          throw new Error("Unable to load oclona-case-study.md.");
+
+        const markdown = await response.text();
+        const container = document.getElementById("content");
+        container.innerHTML = marked.parse(markdown);
+
+        container
+          .querySelectorAll("pre code.language-mermaid")
+          .forEach((code) => {
+            const diagram = document.createElement("div");
+            diagram.className = "mermaid";
+            diagram.textContent = code.textContent;
+            code.parentElement.replaceWith(diagram);
+          });
+
+        container.querySelectorAll("img").forEach((img) => {
+          img.loading = "lazy";
+          img.decoding = "async";
+        });
+
+        buildTableOfContents(container);
+
+        await mermaid.run({ querySelector: ".mermaid" });
+      }
+
+      function buildTableOfContents(container) {
+        const headings = [...container.querySelectorAll("h2")];
+        const list = document.getElementById("toc-list");
+
+        headings.forEach((heading, index) => {
+          const id = "section-" + (index + 1);
+          heading.id = id;
+
+          const item = document.createElement("li");
+          const link = document.createElement("a");
+          link.href = "#" + id;
+          link.textContent = heading.textContent;
+
+          item.appendChild(link);
+          list.appendChild(item);
+        });
+      }
+
+      loadCaseStudy().catch((error) => {
+        document.getElementById("content").innerHTML =
+          '<section class="error"><h1>Unable to load the case study</h1><p>' +
+          error.message +
+          "</p><p>Run the repository through a local HTTP server instead of opening index.html directly with file://.</p></section>";
+      });
+
+      const backToTop = document.getElementById("backToTop");
+
+      window.addEventListener("scroll", () => {
+        backToTop.classList.toggle("visible", window.scrollY > 500);
+      });
+
+      backToTop.addEventListener("click", () => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      });
+    </script>
+  </body>
+</html>
