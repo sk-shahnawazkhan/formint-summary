@@ -1,18 +1,21 @@
-# Oclona – Multi-Tenant HR SaaS (System Design Summary)
+# Oclona – Multi-Tenant HR SaaS (Technical Overview)
 
-Oclona is a multi-tenant HR SaaS system designed to handle tenant-scoped onboarding, team management, and workflow-driven operations with strict data isolation.
+Oclona is a multi-tenant HR SaaS platform designed to bring workforce operations into a unified, role-aware system with strict tenant-level data isolation.
 
-It is built using Supabase (Postgres + Row Level Security) and a React-based frontend.
+It is built using a React-based frontend and Supabase (Postgres, Auth, Row Level Security, Storage and Edge Functions).
 
-The system emphasizes backend-enforced security (RLS), controlled onboarding flows, and predictable multi-tenant behavior without relying on client-side trust.
+The system emphasizes backend-enforced security, controlled onboarding flows, workflow-driven operations and predictable multi-tenant behavior without relying on client-side trust.
 
-This repository focuses on the **system design, architectural decisions, and engineering trade-offs** behind the product.
+This repository provides a technical overview of the **product's architecture, engineering decisions, security model and key workflows.**
 
 ---
 
-## Live Demo
+## Links
 
-Public demo will be added once the current production deployment is stabilized.
+- **Case Study:** https://sk-shahnawazkhan.github.io/oclona-summary/case-study/
+- **Live Product:** https://app.oclona.com/
+- **Marketing Website:** https://oclona.com/
+- **Repository:** https://github.com/sk-shahnawazkhan/oclona-summary
 
 ---
 
@@ -34,39 +37,50 @@ Public demo will be added once the current production deployment is stabilized.
 
 ## Problem Space
 
-Multi-tenant systems introduce challenges that go beyond standard CRUD applications:
+Multi-tenant systems introduce challenges around data isolation, authorization, workflows and lifecycle management:
 
 - Enforcing strict **tenant-level data isolation**
 - Designing onboarding flows without exposing internal identifiers
 - Managing **role-based access** across multiple modules
-- Supporting workflow-driven operations (invites, approvals, lifecycle states)
-- Handling data-heavy interfaces with consistent performance
+- Supporting workflow-driven operations such as invitations, approvals and lifecycle states
+- Handling data-heavy interfaces with consistent filtering, sorting, pagination and updates
 
-Oclona is structured to address these constraints in a predictable and scalable way.
+Oclona is structured to address these constraints through clear application boundaries, database-enforced authorization and predictable product workflows.
 
 ---
 
 ## System Overview
 
 - Multi-tenant architecture (**tenant = company**)
-- Invite-based onboarding system
-- Role-based access control (Admin, Employee)
-- Core modules:
+- Invite-based employee onboarding
+- Role-based access control:
+  - Super Admin
+  - Owner
+  - Admin
+  - HR
+  - Manager
+  - Employee
+- Core product domains:
+  - Team & member management
+  - Employee onboarding & profiles
   - Leave management
-  - Employee onboarding
-  - Team management
-
-- Data-intensive UI (tables, filters, analytics dashboards)
+  - Workforce dashboards & insights
+- Data-intensive interfaces using tables, filters, forms and analytics
 
 ---
 
 ## 📊 Architecture Overview
 
-- **Frontend:** React (SPA) with hooks, context, modular structure
-- **Backend:** Supabase (Postgres, Auth, Storage)
-- **Authorization:** Row Level Security (RLS)
+- **Frontend:** React SPA with modular feature architecture, hooks, context and reusable components
+- **Backend:** Supabase
+  - PostgreSQL
+  - Authentication
+  - Storage
+  - Edge Functions
+- **Authorization:** PostgreSQL Row Level Security (RLS)
 - **Server Logic:** Supabase Edge Functions for privileged operations
-- **Data Isolation:** Enforced at database level using `tenant_id`
+- **Data Isolation:** Tenant-scoped records enforced at the database layer using `tenant_id`
+- **Deployment:** Vercel + Supabase
 
 ---
 
@@ -74,66 +88,75 @@ Oclona is structured to address these constraints in a predictable and scalable 
 
 ### Tenant Isolation Without Client Trust
 
-Users must never access data outside their tenant scope.
+Users must never access data outside their authorized tenant scope.
 
-**Impact:** Any leakage here breaks the core SaaS boundary model.
+**Impact:**
+
+A tenant isolation failure would compromise the core SaaS security boundary.
 
 **Approach:**
 
-- Enforced via RLS policies scoped by `tenant_id`
-- Eliminates reliance on client-side validation
+- Enforced through PostgreSQL RLS policies
+- Policies evaluate tenant membership and role
+- Client-side checks are treated as UX controls rather than security boundaries
 
 ---
 
 ### Invite-Based Onboarding
 
-Users should be able to join a tenant securely without exposing tenant identifiers.
+Users should be able to join a tenant through a controlled invitation flow.
 
-**Impact:** A weak invite system can allow unauthorized users to join tenants or expose internal tenant identifiers, breaking core access boundaries.
+**Impact:**
+
+A weak invitation system could allow unauthorized tenant access or incorrect tenant association.
 
 **Approach:**
 
-- Token-based invite system
+- Token-based invitation flow
 - Email-driven onboarding
-- Tenant association handled during controlled signup
-- Invite lifecycle tracking (Pending, Accepted, Expired)
+- Controlled tenant association during signup
+- Invite lifecycle tracking:
+  - Pending
+  - Accepted
+  - Expired
+  - Revoked
 
 ---
 
-### Initial Admin Setup
+### Initial Tenant Setup
 
-The first user must create both tenant and admin context.
+The first user must establish both the tenant and initial owner context.
 
 **Approach:**
 
-- Two-step flow:
-  1. User signup
-  2. Company setup
-
-- Tenant and admin profile created together
+- User signup
+- Company setup
+- Tenant and owner/member context created together
 
 ---
 
 ### Data-Heavy UI Complexity
 
-Tables require consistent handling of filtering, sorting, pagination, and updates.
+HR workflows require tables and interfaces that handle filtering, sorting, pagination, forms and state changes consistently.
 
 **Approach:**
 
-- TanStack Table with controlled state
-- Reusable table and drawer patterns
+- TanStack Table for data-heavy interfaces
+- Reusable table, drawer, form and dialog patterns
+- Feature-based frontend structure
 - Predictable data flow across views
 
 ---
 
 ### Secure Privileged Operations
 
-Certain actions require elevated permissions (e.g., sending invites).
+Certain operations require elevated server-side capabilities, such as transactional email delivery.
 
 **Approach:**
 
-- Supabase Edge Functions using `service_role`
-- Restricted execution for sensitive operations
+- Supabase Edge Functions
+- Restricted server-side execution
+- Service-role access isolated from the client
 
 ---
 
@@ -141,33 +164,37 @@ Certain actions require elevated permissions (e.g., sending invites).
 
 ### Why Supabase?
 
-- Unified layer for Auth, Database, RLS, and Storage
-- Reduces backend surface area
-- Enables faster iteration on product features
+- Unified platform for Auth, PostgreSQL, RLS, Storage and Edge Functions
+- Reduces the amount of custom backend infrastructure
+- Provides strong database-level authorization capabilities
+- Enables faster product iteration
 
 ---
 
-### Why RLS over API-Level Authorization?
+### Why RLS Over Client/API-Level Authorization?
 
-- Security enforced at the data layer
-- Removes dependency on API-level checks
-- Scales naturally with multi-tenant access patterns
+- Security is enforced at the data layer
+- Database access remains protected even when client-side logic changes
+- Tenant-scoped access rules can be expressed close to the data
+- Reduces reliance on application-layer authorization alone
 
 ---
 
 ### Why Invite-Based Onboarding?
 
-- Prevents unauthorized tenant access
-- Ensures controlled user lifecycle
-- Simplifies role assignment
+- Provides controlled tenant entry
+- Prevents arbitrary tenant association
+- Supports explicit role assignment
+- Enables a clear member lifecycle
 
 ---
 
 ### Why React SPA?
 
-- Fine control over UI and state
-- Supports dynamic, workflow-heavy interfaces
-- Encourages reusable component patterns
+- Well suited to dynamic, workflow-heavy product interfaces
+- Provides fine control over UI and state
+- Supports reusable component and feature patterns
+- Works well with Supabase-backed applications
 
 ---
 
@@ -175,47 +202,62 @@ Certain actions require elevated permissions (e.g., sending invites).
 
 ### Multi-Tenant Onboarding
 
-`Admin Signup` → `Email Verification` → `Company Setup` → `Invite Member` → `Accept Invite` → `Member Signup` → `Tenant Linking` → `Access System`
+`Owner Signup` → `Email Verification` → `Company Setup` → `Invite Member` → `Accept Invite` → `Member Signup` → `Tenant Linking` → `Access System`
 
 **Why this matters:**
-This flow ensures users can only enter a tenant through controlled invites, preventing unauthorized access and maintaining strict tenant boundaries.
+
+The flow establishes tenant membership through controlled onboarding rather than trusting client-provided tenant identifiers.
 
 ---
 
 ### Team Management
 
-- Admin sends invite
-- Invite tracked (Pending / Accepted / Expired)
-- Member joins via secure link
-- Team state updates accordingly
+- Owner/Admin manages team members
+- Authorized users send invitations
+- Invitations move through lifecycle states
+- Accepted members become part of the tenant
+- Member access is controlled through role and tenant scope
+
+---
+
+### Employee Onboarding
+
+- Employee completes profile information
+- Profile completion state controls onboarding experience
+- Employee information is associated with the correct tenant/member
+- Authorized roles can manage employee profiles according to access rules
 
 ---
 
 ### Leave Management
 
-- Employee submits leave request
-- Admin reviews
-- Status updated (Approved / Rejected / Cancelled)
-- Reflected in records and balances
-
----
-
-### Flow Diagrams (Coming Soon)
+- Leave types define available leave categories
+- Entitlements define employee leave allocations
+- Employees submit leave requests
+- Authorized users review requests
+- Approved requests update leave accounting
+- Requests move through controlled lifecycle states
 
 ---
 
 ## 🔐 Security & Data Isolation
 
-- All tenant data secured via **Row Level Security (RLS)**
-- Access restricted to tenant-scoped records
-- Sensitive operations handled via **Edge Functions**
-- Storage access controlled and scoped per tenant
+- Tenant data protected using **PostgreSQL Row Level Security (RLS)**
+- Access evaluated using tenant membership and role
+- Sensitive operations handled through **Supabase Edge Functions**
+- Storage access is scoped to authorized application flows
+- Database constraints protect structural data integrity
+- Database triggers handle selected automated behaviors such as timestamps and leave accounting
+
+The security model separates:
+
+**Authentication → Authorization → Data Integrity → Database Automation**
 
 ---
 
 ## Email & Communication Infrastructure
 
-Oclona uses a production-oriented email architecture that separates business communication from transactional email delivery to improve maintainability, deliverability, and domain reputation management.
+Oclona separates business communication from transactional email delivery to improve maintainability, deliverability and domain reputation management.
 
 ### Domain Structure
 
@@ -239,11 +281,11 @@ Transactional emails are delivered using Resend and Supabase Edge Functions thro
 
 Current use cases include:
 
-- invite-based employee onboarding
-- tenant member invitations
-- onboarding communications
-- workflow notifications
-- future authentication and system-generated emails
+- Invite-based employee onboarding
+- Tenant member invitations
+- Onboarding communications
+- Workflow notifications
+- Future authentication and system-generated emails
 
 Example identities:
 
@@ -252,81 +294,76 @@ Example identities:
 
 ### Email Security & Deliverability
 
-To ensure secure, authenticated, and reliable email delivery, the infrastructure is configured with industry-standard email authentication mechanisms:
+The infrastructure uses standard email authentication mechanisms:
 
-- SPF (Sender Policy Framework)
-- DKIM (DomainKeys Identified Mail)
-- DMARC (Domain-based Message Authentication, Reporting & Conformance)
+- SPF
+- DKIM
+- DMARC
 
-This configuration helps provide:
-
-- authenticated email delivery
-- improved inbox placement
-- spoofing and phishing protection
-- production-grade communication reliability
-- long-term domain reputation management
+These help support authenticated delivery, spoofing protection, inbox placement and long-term domain reputation.
 
 ### Operational Monitoring
 
-Email delivery and communication workflows are monitored through:
+Email and deployment workflows are monitored through:
 
-- Resend Activity & Delivery Analytics
-- Supabase Edge Function Logs
-- Vercel Deployment Monitoring
+- Resend delivery analytics
+- Supabase Edge Function logs
+- Vercel deployment monitoring
 
 ---
 
 ## Trade-offs & Limitations
 
-- Supabase limits flexibility compared to a fully custom backend
-- RLS introduces additional complexity in debugging and query design
-- RBAC is currently role-based (not permission-level)
-- Edge Functions are used selectively, not as a full backend layer
-- Real-time updates are limited to key workflows
+- Supabase provides speed and integrated infrastructure but offers less flexibility than a fully custom backend
+- RLS introduces additional complexity in policy design and debugging
+- RBAC is currently role-based rather than fully permission-based
+- Edge Functions are used selectively rather than as a complete backend layer
+- Real-time updates are limited to selected workflows
 
 ---
 
 ## 🚀 Future Improvements
 
-- Fine-grained RBAC (permission-level access)
-- Background jobs (pg_cron or queue-based processing)
-- Audit logs for critical actions
+- Migration to TypeScript
+- Fine-grained permission-level authorization
+- Background jobs using scheduled or queue-based processing
+- Expanded audit logging for critical actions
 - Enhanced analytics and reporting
+- Additional workforce and HR domains
 
 ---
 
 ## Project History
 
 - Initially started as a form-based HR tool
-- Evolved into a multi-tenant SaaS system with onboarding, authentication, RBAC, and workflow modules
-- Architecture refined around tenant isolation, security, and scalability
+- Evolved into a multi-tenant SaaS platform
+- Expanded with authentication, onboarding, team management, leave workflows, dashboards and role-based access
+- Architecture progressively refined around tenant isolation, backend-enforced security and maintainable product engineering practices
 
 ---
 
-## Screenshots (Coming Soon)
+## Case Study
 
----
+For the full product walkthrough, screenshots, architecture diagrams, engineering decisions and detailed workflows:
 
-## Architecture Diagram (Coming Soon)
-
----
-
-## Flow Diagrams (Coming Soon)
+**[View the Oclona Case Study](https://sk-shahnawazkhan.github.io/oclona-summary/case-study/)**
 
 ---
 
 ## Notes
 
-This repository represents a **system design summary** of a production-oriented application.
+This repository is a **technical overview and demonstration of Oclona**, a production-oriented HR SaaS product.
 
-The primary implementation repository is private.
+The primary application implementation repository is private. This repository intentionally focuses on architecture, engineering decisions, product workflows, trade-offs and selected technical context rather than exposing the complete production codebase.
+
+Documentation may evolve as the product changes. For current product behavior, refer to the deployed application and implementation.
 
 ---
 
 ## Author
 
-[Shahnawaz Khan](https://shahnawazkhan.vercel.app/), Senior Frontend Engineer  
-Focused on building scalable SaaS products and system design
+[Shahnawaz Khan](https://shahnawazkhan.vercel.app/), Senior Frontend/Product Engineer  
+Focused on building scalable SaaS products and reliable product experiences.
 
 ---
 
